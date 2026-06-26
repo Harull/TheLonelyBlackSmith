@@ -90,6 +90,9 @@ void MenuManager::internalInitObjectCreationMenu()
 		for (auto& _resource : _pair.second.craftCost)
 			_fullItemDisplay += " -" + _resource.GetName() + "(" + std::to_string(_resource.GetCurrentCount()) + ')';
 
+		//Add the requirement to the craft
+		if(_pair.second.craftPossessionRequirement.size() > 0)
+			_fullItemDisplay += std::string("\n\t") + BRIGHT_RED + "Require: " + _pair.second.craftPossessionRequirement + WHITE;
 
 		objectCreationMenu->AddMenuItem({ _fullItemDisplay, [&](std::string& _failContext) {
 

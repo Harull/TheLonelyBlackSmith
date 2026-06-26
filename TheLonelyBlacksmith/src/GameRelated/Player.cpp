@@ -47,8 +47,14 @@ bool Player::TryAndCraftItem(const std::string& _itemName, std::string& _failRea
 	{
 		if (InventoryComponent* _inventory = _player->GetInventory())
 		{
-			//From the inventory, check if have resources
+			//From the inventory, check if meet requirements
+			if (!_inventory->CheckToolPossession(_craftInformations.craftPossessionRequirement))
+			{
+				_failReasons = "This item requires you to posses : " + _craftInformations.craftPossessionRequirement;
+				return false;
+			}
 
+			//From the inventory, check if have resources
 			if (!_inventory->TryUseResources(_craftInformations.craftCost))
 			{
 				_failReasons = "You don't have the resources for that action";
