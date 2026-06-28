@@ -48,8 +48,8 @@ bool Player::TryAndCraftItem(const std::string& _itemName, std::string& _failRea
 		if (InventoryComponent* _inventory = _player->GetInventory())
 		{
 			//From the inventory, check if meet requirements
-			if (!_inventory->CheckToolPossession(_craftInformations.craftPossessionRequirement))
-			{
+			if (_craftInformations.craftPossessionRequirement != "" && !_inventory->CheckToolPossession(_craftInformations.craftPossessionRequirement))
+			{ 
 				_failReasons = "This item requires you to posses : " + _craftInformations.craftPossessionRequirement;
 				return false;
 			}
