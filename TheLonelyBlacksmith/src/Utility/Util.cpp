@@ -1,6 +1,7 @@
 #include "Utility/Util.h"
 #include <iostream>
 #include <algorithm>
+#include <random>
 
 #define WITH_DEBUG true
 
@@ -29,9 +30,14 @@ void Util::PrintTitle(const std::string& _toPrint, const std::string& _color, co
 void Util::PrintEmbed(const std::string& _toPrint, const std::string& _color, const bool _withLineBreak)
 {
 	std::cout << _color;
-	std::cout << "- " << _toPrint << " -" ;
+	std::cout << "[ " << _toPrint << " ]" ;
 	if (_withLineBreak) std::cout << std::endl;
 	std::cout << WHITE;
+}
+
+void Util::LineBreak()
+{
+	std::cout << std::endl;
 }
 
 void Util::Separation()
@@ -72,4 +78,12 @@ std::string Util::ToLower(const std::string& _string) //https://stackoverflow.co
 	std::transform(_toReturn.begin(), _toReturn.end(), _toReturn.begin(),
 		[](unsigned char _c) { return std::tolower(_c); });
 	return _toReturn;
+}
+ 
+int Util::Randint(const int _min, const int _max) //https://stackoverflow.com/questions/13445688/how-to-generate-a-random-number-in-c
+{
+	std::random_device _device;
+	std::mt19937 _rng(_device());
+	std::uniform_int_distribution<std::mt19937::result_type> _distribution(_min, _max); // distribution in range [1, 6]
+	return _distribution(_rng);
 }

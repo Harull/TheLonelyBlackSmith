@@ -45,6 +45,8 @@ public:
 
 	static void PrintEmbed(const std::string& _toPrint, const std::string& _color = "", const bool _withLineBreak = true);
 
+	static void LineBreak();
+
 	static void Separation();
 
 	static void Debug(const std::string& _toPrint, const bool _withLineBreak = true);
@@ -54,5 +56,12 @@ public:
 	static bool Contains(const std::string& _string, const std::string& _contains, const bool _respectCase = false);
 
 	static std::string ToLower(const std::string& _string);
+
+	/// <summary>
+	/// returns an integer number selected element from the specified range
+	/// min and max inclusive
+	/// </summary>
+	/// <returns></returns>
+	static int Randint(const int _min, const int _max);
 };
 

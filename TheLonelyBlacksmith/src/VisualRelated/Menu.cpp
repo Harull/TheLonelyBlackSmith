@@ -20,7 +20,7 @@ bool Menu::ExecuteAtIndex(const int _index, std::string& _failContext)
 	//Try and get the std::function at the index, returns 
 	if (_index < 0 || _index >= menuItems.size())
 	{
-		_failContext = std::string("Index invalid, try a value ranging from ") + " 0 " + " to " + std::to_string(menuItems.size() - 1);
+		_failContext = std::string("Index invalid, try a value ranging from ") + " 1" + " to " + std::to_string(menuItems.size());
 		return false;
 	}
 
@@ -37,7 +37,7 @@ void Menu::PrintAllMenuItems()
 	int _count = 1;
 	for (auto& _pair : menuItems)
 	{
-		Util::PrintEmbed(std::to_string(_count) + "|\t" + _pair.first);
+		Util::PrintEmbed(std::string(BRIGHT_GREEN) + "(" + std::to_string(_count) + ")" + WHITE + " ] [ " + _pair.first);
 		_count++;
 	}
 }

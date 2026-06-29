@@ -1,6 +1,7 @@
 #include "GameRelated/Player.h"
 #include "GameRelated/Game.h"
 #include "GameRelated/GameSettings/GameSettings.h"
+#include <Utility/Util.h>
 
 Player::Player()
 {
@@ -28,6 +29,11 @@ bool Player::CollectItem(const std::string& _item, const int _quantity, const in
 	}
 	inventory->AddResource(_item, _quantity);
 
+	Util::LineBreak();
+	Util::PrintEmbed("You have just collected " + std::to_string(_quantity) + " " + _item, BRIGHT_GREEN);
+	Util::LineBreak();
+	Util::Continue();
+
 	Game::IncrementTotalTurnCount(_numberOfTurns);
 
 	return true;
@@ -41,6 +47,8 @@ bool Player::TryAndCraftItem(const std::string& _itemName, std::string& _failRea
 		return false;
 	}
 	
+
+	
 	const CraftInformations& _craftInformations = Recipes::LIST_OF_RECIPES[_itemName];
 
 	if (Player* _player = Game::GetPlayer())
@@ -53,6 +61,14 @@ bool Player::TryAndCraftItem(const std::string& _itemName, std::string& _failRea
 				_failReasons = "This item requires you to posses : " + _craftInformations.craftPossessionRequirement;
 				return false;
 			}
+			const int _totalCountTurn = Game::GetTotalTurnCount();
+			if ((_totalCountTurn + _craftInformations.numberOfTurns > GameSettings::TURN_TOTAL_COUNT))
+			{
+				_failReasons = "You don't have enough days left to perform this action";
+				return false;
+			}
+
+			Util::LineBreak();
 
 			//From the inventory, check if have resources
 			if (!_inventory->TryUseResources(_craftInformations.craftCost))
@@ -60,8 +76,13 @@ bool Player::TryAndCraftItem(const std::string& _itemName, std::string& _failRea
 				_failReasons = "You don't have the resources for that action";
 				return false;
 			}
+
+			Util::PrintEmbed("You successfully crafted " + _itemName + " !", BRIGHT_GREEN);
 			Game::IncrementTotalTurnCount(_craftInformations.numberOfTurns);
 			_inventory->AddToolToInventory(std::make_unique<Tool>(Tool(_itemName)));
+			Util::LineBreak();
+			Util::Continue();
+
 			return true;
 		}
 		_failReasons = "Player doesnt have an inventory";

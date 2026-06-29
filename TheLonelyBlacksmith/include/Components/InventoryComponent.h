@@ -58,10 +58,19 @@ public: //Resource related
 
 	bool TryUseResources(const std::vector<Resource>& _resources);
 
+	/// <summary>
+	/// Displays the resources collected and the tools crafted
+	/// </summary>
 	void DisplayInventory();
 
+	/// <summary>
+	/// Displays the resources collected
+	/// </summary>
 	void DisplayResources();
 	
+	/// <summary>
+	/// Displays the tools/items crafted
+	/// </summary>
 	void DisplayItems();
 
 
@@ -72,5 +81,15 @@ public:
 	/// Check if possess a tool containing this subname, or full name
 	/// </summary>
 	bool CheckToolPossession(const std::string& _toolSubName);
+
+	/// <summary>
+	/// Retrieve for a given resource, the biggest advantage given by a tool for collecting this type of resource.
+	/// And this parcouring the tools the player possess
+	/// </summary>
+	std::pair<uint8_t, uint8_t> GetBiggestToolAdvantage(const std::string& _resourceName);
+
+private:
+	std::pair<uint8_t, uint8_t> GetToolAdvantage(const std::string& _resourceName, const std::vector<QuantityAdvantage>& _advantages);
+
 };
 

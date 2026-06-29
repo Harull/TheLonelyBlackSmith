@@ -1,6 +1,7 @@
 #include "Components/InventoryComponent.h"
 #include <Utility/Util.h>
 #include <GameRelated/Game.h>
+#include <GameRelated/GameSettings/GameSettings.h>
 
 
 
@@ -100,7 +101,10 @@ bool InventoryComponent::TryUseResources(const std::vector<Resource>& _resources
 
 	//Removes the resources 
 	for (auto& _resource : _resources)
+	{
+		Util::PrintEmbed("-" + std::to_string(_resource.GetCurrentCount()) + ": " + _resource.GetName(), BRIGHT_RED);
 		resources[_resource.GetName()]->SubstractResourceAmount(_resource.GetCurrentCount());
+	}
 
 	return true;
 }
@@ -136,7 +140,10 @@ void InventoryComponent::DisplayItems()
 void InventoryComponent::AddToolToInventory(std::unique_ptr<Tool> _toolToAdd)
 {
 	if (_toolToAdd)
+	{
 		Game::IncrementTotalScore(_toolToAdd->GetCraftInformations().scoreItGives);
+		Util::PrintEmbed("You gained " + std::to_string(_toolToAdd->GetCraftInformations().scoreItGives) + " score points !", BRIGHT_GREEN);
+	}
 
 	tools.emplace_back(std::move(_toolToAdd));
 }
@@ -152,5 +159,30 @@ bool InventoryComponent::CheckToolPossession(const std::string& _toolSubName)
 			return true;
 	}
 	return false;
+}
+
+std::pair<uint8_t, uint8_t> InventoryComponent::GetBiggestToolAdvantage(const std::string& _resourceName)
+{
+	std::pair<uint8_t, uint8_t> _toReturn = GetToolAdvantage(_resourceName, GameSettings::COLLECTIBLE_ADVANTAGE_NO_TOOLS);
+
+	for (auto& _tool : tools)
+	{
+		if (!_tool) continue;
+		const std::pair<uint8_t, uint8_t>& _thisToolAdvantage = GetToolAdvantage(_resourceName, _tool->GetCraftInformations().advantages);
+		if (_thisToolAdvantage.second > _toReturn.second)
+			_toReturn = _thisToolAdvantage;
+	}
+
+	return _toReturn;
+}
+
+std::pair<uint8_t, uint8_t> InventoryComponent::GetToolAdvantage(const std::string& _resourceName, const std::vector<QuantityAdvantage>& _advantages)
+{
+	for (auto _advantage : _advantages)
+	{
+		if (_advantage.resourceName == _resourceName)
+			return { _advantage.minCollectable, _advantage.maxCollectable };
+	}
+	return std::pair<uint8_t, uint8_t>();
 }
 

@@ -26,19 +26,19 @@ void MenuManager::internalInitMainMenu()
 		{"Craft An Item", [&](std::string& _failContext)
 			{
 				ChangeCurrentMenu(objectCreationMenu);
-				return true; //Let's say ChangeCurrentMenu actions can't fail
+				return true; 
 			}
 		},
 		{"Open Inventory", [&](std::string& _failContext)
 			{
 				ChangeCurrentMenu(displayResourcesMenu);
-				return true; //Let's say ChangeCurrentMenu actions can't fail
+				return true; 
 			}
 		},
 		{"Close Game", [&](std::string& _failContext)
 			{
 				Game::Terminate("User requested to terminate the game");
-				return true; //Let's say this action can't fail
+				return true;
 			}
 		},
 		}));
@@ -46,24 +46,20 @@ void MenuManager::internalInitMainMenu()
 
 void MenuManager::internalInitCollectResourcesMenu()
 {
-	collectResourceMenu = std::make_shared<Menu>(Menu("Collected Items", {
+	collectResourceMenu = std::make_shared<Menu>(Menu("Collect Resources", {
 		{"Collect Wood", [&](std::string& _failContext)
 			{
-				const int _collectableQuantity = 1; //TODO Temp to replace when class tool is implemented, in the end i don't have time anymore for this :c
-				return Game::GetPlayer()->CollectItem("Wood", 1, 1, _failContext);
+				return CollectRessource(_failContext, "Wood");
 			}
 		},
 		{"Collect Stone", [&](std::string& _failContext)
 			{
-				const int _collectableQuantity = 1; //Temp to replace when class tool is implemented
-				return Game::GetPlayer()->CollectItem("Stone", 1, 1, _failContext);
+				return CollectRessource(_failContext, "Stone");
 			}
 		},
 		{"Collect Iron - Require Pickaxe", [&](std::string& _failContext)
 			{
-				const int _collectableQuantity = 1; //Temp to replace when class tool is implemented
-				const bool _requirements = Game::GetPlayer()->GetInventory()->CheckToolPossession("Pickaxe");
-				return Game::GetPlayer()->CollectItem("Iron", 1, 1, _failContext, _requirements);
+				return CollectRessource(_failContext, "Iron", Game::GetPlayer()->GetInventory()->CheckToolPossession("Pickaxe"));
 			}
 		},
 		{"{Back}", [&](std::string& _failContext)
@@ -84,15 +80,19 @@ void MenuManager::internalInitObjectCreationMenu()
 	for (auto& _pair : _recipesToAdd)
 	{
 		//Gets informations displayed (name, cost, requirements)
-		std::string _fullItemDisplay = _pair.first + "\t";
+		std::string _fullItemDisplay = _pair.first + " ] [";
 
 		//Add the cost to the full item display
 		for (auto& _resource : _pair.second.craftCost)
 			_fullItemDisplay += " -" + _resource.GetName() + "(" + std::to_string(_resource.GetCurrentCount()) + ')';
+		_fullItemDisplay += " -" + std::to_string(_pair.second.numberOfTurns) + " days ]";
 
+		//Add the number of score it gives
+		_fullItemDisplay += " [ +" + std::to_string(_pair.second.scoreItGives) + " score points ]";
+		 
 		//Add the requirement to the craft
 		if(_pair.second.craftPossessionRequirement.size() > 0)
-			_fullItemDisplay += std::string("\n\t") + BRIGHT_RED + "Require: " + _pair.second.craftPossessionRequirement + WHITE;
+			_fullItemDisplay += std::string("\n\t[ ") + BRIGHT_RED + "Require: " + _pair.second.craftPossessionRequirement + WHITE;
 
 		objectCreationMenu->AddMenuItem({ _fullItemDisplay, [&](std::string& _failContext) {
 
@@ -127,4 +127,14 @@ void MenuManager::ChangeCurrentMenu(std::shared_ptr<Menu> _menuToChangeTo)
 	if (!_menuToChangeTo)return;
 	Util::Debug("Changed the current menu to: " + _menuToChangeTo->GetName());
 	currentMenu = _menuToChangeTo;
+}
+
+bool MenuManager::CollectRessource(std::string& _failContext, const std::string& _resourceName, const bool _requirement)
+{
+	//Retrieve the biggest advantage available for this resource
+	const std::pair<uint8_t, uint8_t> _advantageMinMax = Game::GetPlayer()->GetInventory()->GetBiggestToolAdvantage(_resourceName);
+	//Extract a random quantity from it
+	const int _collectableQuantity = Util::Randint(_advantageMinMax.first, _advantageMinMax.second);
+	//Collects the item, and returning success
+	return Game::GetPlayer()->CollectItem(_resourceName, _collectableQuantity, 1, _failContext, _requirement);
 }

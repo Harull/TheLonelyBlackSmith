@@ -64,6 +64,6 @@ private: // coudl be called outside this class
 
 private:
 	void ChangeCurrentMenu(std::shared_ptr<Menu> _menuToChangeTo);
-
+	bool CollectRessource(std::string& _failContext, const std::string& _resourceName, const bool _requirement = true);
 };
 

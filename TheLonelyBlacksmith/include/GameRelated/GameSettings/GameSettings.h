@@ -14,4 +14,8 @@ public: //TODO maybe change this public with accessors to values
 		Resource("Iron", 0)	
 	};
 
+	inline static std::vector<QuantityAdvantage> COLLECTIBLE_ADVANTAGE_NO_TOOLS	= {
+		QuantityAdvantage("Wood", 1, 1),
+		QuantityAdvantage("Stone", 1, 1),
+	};
 };

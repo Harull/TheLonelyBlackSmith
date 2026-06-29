@@ -42,7 +42,9 @@ void Game::internalGameLoop()
 		const bool _success = MenuManager::ExecuteMenuAtIndex(_playerActionIndex - 1, _failContext);
 		if (!_success)
 		{
+			Util::LineBreak();
 			Util::PrintEmbed(_failContext, BRIGHT_RED);
+			Util::LineBreak();
 			Util::Continue();
 		}
 	}
@@ -100,7 +102,7 @@ void Game::internalDisplayMenu()
 int Game::internalPlayerRequestInput()
 {
 	std::cout << std::endl;
-	Util::PrintEmbed("Player, what would you like to do?\n Select an index corresponding to your desired action", BRIGHT_RED);
+	Util::PrintEmbed("Player, what would you like to do?\n Select an index corresponding to your desired action", BRIGHT_GREEN);
 	std::cout << std::endl;
 	std::string _returnedValue;
 
